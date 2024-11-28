@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Login</h1>
+
+    <form id="loginForm">
+        <label for="usuario">Nome de Usuário:</label>
+        <input type="text" id="usuario" name="usuario" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <button type="submit">Cadastrar</button>
+        <button type="button" onclick="goBack()">Voltar</button>
+    </form>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+
+            // Cria o objeto login
+            const login = { 
+                usuario, 
+                senha 
+            };
+
+            // Envia o login para o processo principal do Electron
+            ipcRenderer.invoke('inserirLogin', login).then((id) => {
+                alert('Login cadastrado com sucesso! ID: ' + id);
+                document.getElementById('loginForm').reset(); // Limpa o formulário após o cadastro
+                goBack(); // Volta para a página anterior
+            }).catch(err => {
+                console.error('Erro ao cadastrar login:', err);
+                alert('Erro ao cadastrar login.');
+            });
+        });
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'pagina_anterior.html'); // Navega de volta para a página anterior
+        }
+    </script>
+</body>
+</html>
