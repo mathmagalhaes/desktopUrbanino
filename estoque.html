@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Estoque</h1>
+    <p>Conteúdo relacionado ao estoque.</p>
+
+    <button onclick="electron.navigate('cadastrar_estoque.html')">Cadastrar Novo Item</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <table id="estoqueTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código Fornecedor</th>
+                <th>Item</th>
+                <th>Peso</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados do estoque serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar itens do estoque
+        function listarEstoque() {
+            ipcRenderer.invoke('listarEstoque').then((itens) => {
+                const tableBody = document.querySelector('#estoqueTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                itens.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.codigo_fornecedor}</td>
+                        <td>${item.item}</td>
+                        <td>${item.peso}</td>
+                        <td>${item.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar itens do estoque:', err);
+            });
+        }
+
+        // Chama a função para listar itens do estoque ao carregar a página
+        window.onload = listarEstoque;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega diretamente para index.html
+        }
+    </script>
+</body>
+</html>

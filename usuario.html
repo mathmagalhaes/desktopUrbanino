@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Usuário</h1>
+    <p>Conteúdo relacionado a usuários.</p>
+
+    <button onclick="electron.navigate('cadastrar_usuario.html')">Cadastrar Novo Usuário</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <table id="usuariosTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Função</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados dos usuários serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar usuários
+        function listarUsuarios() {
+            ipcRenderer.invoke('listarUsuarios').then((usuarios) => {
+                const tableBody = document.querySelector('#usuariosTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                usuarios.forEach(usuario => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${usuario.id}</td>
+                        <td>${usuario.nome}</td>
+                        <td>${usuario.telefone}</td>
+                        <td>${usuario.email}</td>
+                        <td>${usuario.funcao}</td>
+                        <td>${usuario.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar usuários:', err);
+            });
+        }
+
+        // Chama a função para listar usuários ao carregar a página
+        window.onload = listarUsuarios;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'administracao.html'); // Navega de volta para a página de administração
+        }
+    </script>
+</body>
+</html>

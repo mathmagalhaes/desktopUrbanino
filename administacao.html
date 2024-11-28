@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Administração</h1>
+    <p>Conteúdo relacionado à administração.</p>
+
+    <button onclick="navigateTo('usuario.html')">Usuário</button>
+    <button onclick="navigateTo('entidades.html')">Entidades</button>
+    <button onclick="navigateTo('relatorios.html')">Relatórios</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function navigateTo(page) {
+            ipcRenderer.send('navigate', page); // Envia a página para navegar
+        }
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega de volta para a página inicial
+        }
+    </script>
+</body>
+</html>

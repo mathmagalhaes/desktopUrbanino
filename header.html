@@ -1,0 +1,27 @@
+<header>
+    <h1>Meu Aplicativo</h1>
+    <button id="homeButton">Ir para Início</button>
+</header>
+
+<script>
+    const { ipcRenderer } = require('electron');
+
+    // Função para navegar para a página index.html
+    document.getElementById('homeButton').addEventListener('click', () => {
+        ipcRenderer.send('navigate', 'index.html'); // Envia uma mensagem para navegar para index.html
+    });
+</script>
+
+<style>
+    header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+</style>

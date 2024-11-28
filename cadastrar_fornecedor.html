@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Fornecedor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Fornecedor</h1>
+
+    <form id="fornecedorForm">
+        <label for="cnpj">CNPJ:</label>
+        <input type="text" id="cnpj" name="cnpj" required>
+
+        <label for="nomeFantasia">Nome Fantasia:</label>
+        <input type="text" id="nomeFantasia" name="nomeFantasia" required>
+
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" name="endereco" required>
+
+        <label for="uf">UF:</label>
+        <input type="text" id="uf" name="uf" required>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+        </select>
+
+        <label for="contatos">Contatos:</label>
+        <input type="text" id="contatos" name="contatos" required>
+
+        <button type="submit">Cadastrar</button>
+        <button type="button" onclick="goBack()">Voltar</button>
+    </form>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('fornecedorForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const cnpj = document.getElementById('cnpj').value;
+            const nomeFantasia = document.getElementById('nomeFantasia').value;
+            const endereco = document.getElementById('endereco').value;
+            const uf = document.getElementById('uf').value;
+            const status = document.getElementById('status').value;
+            const contatos = document.getElementById('contatos').value;
+
+            // Cria o objeto fornecedor
+            const fornecedor = { 
+                cnpj, 
+                nome_fantasia: nomeFantasia, 
+                endereco, 
+                uf, 
+                status, 
+                contatos 
+            };
+
+            // Envia o fornecedor para o processo principal do Electron
+            ipcRenderer.invoke('inserirFornecedor', fornecedor).then((id) => {
+                alert('Fornecedor cadastrado com sucesso! ID: ' + id);
+                document.getElementById('fornecedorForm').reset(); // Limpa o formulário após o cadastro
+                goBack(); // Volta para a página de fornecedores
+            }).catch(err => {
+                console.error('Erro ao cadastrar fornecedor:', err);
+                alert('Erro ao cadastrar fornecedor.');
+            });
+        });
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'fornecedor.html'); // Navega de volta para a página de fornecedores
+        }
+    </script>
+</body>
+</html>

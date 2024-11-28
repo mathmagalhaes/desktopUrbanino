@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Financeiro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Relatório Financeiro</h1>
+    <button onclick="goBack()">Voltar</button>
+
+    <table id="financeiroTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Data de Vencimento</th>
+                <th>Valor</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados financeiros serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar dados financeiros
+        function listarFinanceiro() {
+            ipcRenderer.invoke('listarFinanceiro').then((registros) => {
+                const tableBody = document.querySelector('#financeiroTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                registros.forEach(registro => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${registro.id}</td>
+                        <td>${registro.nome}</td>
+                        <td>${registro.data_vencimento}</td>
+                        <td>${registro.valor}</td>
+                        <td>${registro.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar registros financeiros:', err);
+            });
+        }
+
+        // Chama a função para listar dados financeiros ao carregar a página
+        window.onload = listarFinanceiro;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'relatorios.html'); // Navega de volta para a página de relatórios
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produção</title>
+</head>
+<body>
+    <h1>Página de Produção</h1>
+    <p>Conteúdo relacionado à produção.</p>
+    <button onclick="goBack()">Voltar</button>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Usuário</h1>
+
+    <form id="usuarioForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="telefone">Telefone:</label>
+        <input type="tel" id="telefone" name="telefone" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="funcao">Função:</label>
+        <input type="text" id="funcao" name="funcao" required>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+        </select>
+
+        <button type="submit">Cadastrar</button>
+        <button type="button" onclick="goBack()">Voltar</button>
+    </form>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('usuarioForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const email = document.getElementById('email').value;
+            const funcao = document.getElementById('funcao').value;
+            const status = document.getElementById('status').value;
+
+            // Cria o objeto usuário
+            const usuario = { 
+                nome, 
+                telefone, 
+                email, 
+                funcao, 
+                status 
+            };
+
+            // Envia o usuário para o processo principal do Electron
+            ipcRenderer.invoke('inserirUsuario', usuario).then((id) => {
+                alert('Usuário cadastrado com sucesso! ID: ' + id);
+                document.getElementById('usuarioForm').reset(); // Limpa o formulário após o cadastro
+                goBack(); // Volta para a página de usuários
+            }).catch(err => {
+                console.error('Erro ao cadastrar usuário:', err);
+                alert('Erro ao cadastrar usuário.');
+            });
+        });
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'usuario.html'); // Navega de volta para a página de usuários
+        }
+    </script>
+</body>
+</html>

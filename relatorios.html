@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Relatórios</h1>
+    <p>Selecione o relatório desejado:</p>
+
+    <button onclick="navigateTo('relatorio_producao.html')">Relatório de Produção</button>
+    <button onclick="navigateTo('relatorio_financeiro.html')">Relatório Financeiro</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function navigateTo(page) {
+            ipcRenderer.send('navigate', page); // Navega para a página do relatório selecionado
+        }
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega de volta para a página principal
+        }
+    </script>
+</body>
+</html>

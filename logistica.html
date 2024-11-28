@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logística</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página de Logística</h1>
+    <p>Conteúdo relacionado à logística.</p>
+
+    <button onclick="electron.navigate('cadastrar_logistica.html')">Cadastrar Novo Registro</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <table id="logisticaTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código de Entrega</th>
+                <th>Código de Pedido</th>
+                <th>Cliente</th>
+                <th>CEP de Entrega</th>
+                <th>Placa do Veículo</th>
+                <th>Data de Pedido</th>
+                <th>Data de Entrega</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados da logística serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar registros de logística
+        function listarLogistica() {
+            ipcRenderer.invoke('listarLogistica').then((registros) => {
+                const tableBody = document.querySelector('#logisticaTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                registros.forEach(registro => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${registro.id}</td>
+                        <td>${registro.codigo_entrega}</td>
+                        <td>${registro.codigo_pedido}</td>
+                        <td>${registro.cliente}</td>
+                        <td>${registro.cep_entrega}</td>
+                        <td>${registro.placa_veiculo}</td>
+                        <td>${registro.data_pedido}</td>
+                        <td>${registro.data_entrega}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar registros de logística:', err);
+            });
+        }
+
+        // Chama a função para listar registros de logística ao carregar a página
+        window.onload = listarLogistica;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega diretamente para index.html
+        }
+    </script>
+</body>
+</html>

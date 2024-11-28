@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Página do Cliente</h1>
+    <p>Conteúdo relacionado ao cliente.</p>
+
+    <button onclick="electron.navigate('cadastrar_cliente.html')">Cadastrar Novo Cliente</button>
+    <button onclick="goBack()">Voltar</button>
+
+    <table id="clientesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Razão Social</th>
+                <th>CNPJ</th>
+                <th>Nome</th>
+                <th>Endereço</th>
+                <th>UF</th>
+                <th>Status</th>
+                <th>Contato</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados dos clientes serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar clientes
+        function listarClientes() {
+            ipcRenderer.invoke('listarClientes').then((clientes) => {
+                const tableBody = document.querySelector('#clientesTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                clientes.forEach(cliente => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${cliente.id}</td>
+                        <td>${cliente.razao_social}</td>
+                        <td>${cliente.cnpj}</td>
+                        <td>${cliente.nome}</td>
+                        <td>${cliente.endereco}</td>
+                        <td>${cliente.uf}</td>
+                        <td>${cliente.status}</td>
+                        <td>${cliente.contato}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar clientes:', err);
+            });
+        }
+
+        // Chama a função para listar clientes ao carregar a página
+        window.onload = listarClientes;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega diretamente para index.html
+        }
+    </script>
+</body>
+</html>

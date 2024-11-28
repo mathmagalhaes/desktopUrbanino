@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu App Electron</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Olá, Electron!</h1>
+    <p>Bem-vindo ao seu aplicativo Electron.</p>
+    
+    <div>
+        <button id="fornecedor">Fornecedor</button>
+        <button id="cliente">Cliente</button>
+        <button id="financeiro">Financeiro</button>
+        <button id="logistica">Logística</button>
+        <button id="producao">Produção</button>
+        <button id="estoque">Estoque</button>
+        <button id="administracao">Administração</button>
+    </div>
+
+    <script>
+        document.getElementById('fornecedor').addEventListener('click', function() {
+            window.electron.navigate('fornecedor.html');
+        });
+
+        document.getElementById('cliente').addEventListener('click', function() {
+            window.electron.navigate('cliente.html');
+        });
+
+        document.getElementById('financeiro').addEventListener('click', function() {
+            window.electron.navigate('financeiro.html');
+        });
+
+        document.getElementById('logistica').addEventListener('click', function() {
+            window.electron.navigate('logistica.html');
+        });
+
+        document.getElementById('producao').addEventListener('click', function() {
+            window.electron.navigate('producao.html');
+        });
+
+        document.getElementById('estoque').addEventListener('click', function() {
+            window.electron.navigate('estoque.html');
+        });
+
+        document.getElementById('administracao').addEventListener('click', function() {
+            window.electron.navigate('administracao.html');
+        });
+    </script>
+</body>
+</html>

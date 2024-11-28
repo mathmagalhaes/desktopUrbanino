@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Produção</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .checkbox-group {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Relatório de Produção</h1>
+    <button onclick="goBack()">Voltar</button>
+
+    <div class="checkbox-group">
+        <h3>Selecione os dados para o relatório:</h3>
+        <label><input type="checkbox" id="produtosCheckbox"> Produtos</label><br>
+        <label><input type="checkbox" id="produzidosCheckbox"> Produzidos</label><br>
+        <label><input type="checkbox" id="vendidosCheckbox"> Vendidos</label><br>
+        <label><input type="checkbox" id="vendasEstoqueCheckbox"> Vendas do Estoque</label><br>
+        <label><input type="checkbox" id="custoProdutoCheckbox"> Custo por Produto</label><br>
+        <label><input type="checkbox" id="precoProdutoCheckbox"> Preço por Produto</label><br>
+        <label><input type="checkbox" id="lucroCheckbox"> Lucro</label><br>
+    </div>
+
+    <button onclick="gerarRelatorio()">Gerar Relatório</button>
+
+    <table id="producaoTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Quantidade Produzida</th>
+                <th>Data de Produção</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados de produção serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // Função para listar dados de produção
+        function listarProducao() {
+            ipcRenderer.invoke('listarProducao').then((producoes) => {
+                const tableBody = document.querySelector('#producaoTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+
+                producoes.forEach(producao => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${producao.id}</td>
+                        <td>${producao.produto}</td>
+                        <td>${producao.quantidade}</td>
+                        <td>${producao.data}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }).catch(err => {
+                console.error('Erro ao listar produções:', err);
+            });
+        }
+
+        // Função para gerar o relatório com base nas opções selecionadas
+        function gerarRelatorio() {
+            const relatorioOptions = {
+                produtos: document.getElementById('produtosCheckbox').checked,
+                produzidos: document.getElementById('produzidosCheckbox').checked,
+                vendidos: document.getElementById('vendidosCheckbox').checked,
+                vendasEstoque: document.getElementById('vendasEstoqueCheckbox').checked,
+                custoProduto: document.getElementById('custoProdutoCheckbox').checked,
+                precoProduto: document.getElementById('precoProdutoCheckbox').checked,
+                lucro: document.getElementById('lucroCheckbox').checked,
+            };
+
+            // Envia as opções para o processo principal para gerar o relatório
+            ipcRenderer.invoke('gerarRelatorioProducao', relatorioOptions).then((resultado) => {
+                alert('Relatório gerado com sucesso!'); // Aqui você pode implementar a lógica para mostrar o relatório
+            }).catch(err => {
+                console.error('Erro ao gerar relatório:', err);
+                alert('Erro ao gerar relatório.');
+            });
+        }
+        // Chama a função para listar dados de produção ao carregar a página
+        window.onload = listarProducao;
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'index.html'); // Navega de volta para a página principal
+        }
+    </script>
+</body>
+</html>
+       
