@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Fornecedor</title>
+    <title>Cadastrar Cliente</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,14 +27,17 @@
     </style>
 </head>
 <body>
-    <h1>Cadastrar Fornecedor</h1>
+    <h1>Cadastrar Cliente</h1>
 
-    <form id="fornecedorForm">
+    <form id="clienteForm">
+        <label for="razao_social">Razão Social:</label>
+        <input type="text" id="razao_social" name="razao_social" required>
+
         <label for="cnpj">CNPJ:</label>
         <input type="text" id="cnpj" name="cnpj" required>
 
-        <label for="nome_fantasia">Nome Fantasia:</label>
-        <input type="text" id="nome_fantasia" name="nome_fantasia" required>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
 
         <label for="endereco">Endereço:</label>
         <input type="text" id="endereco" name="endereco" required>
@@ -43,13 +46,10 @@
         <input type="text" id="uf" name="uf" required>
 
         <label for="status">Status:</label>
-        <select id="status" name="status" required>
-            <option value="Ativo">Ativo</option>
-            <option value="Inativo">Inativo</option>
-        </select>
+        <input type="text" id="status" name="status" required>
 
-        <label for="contatos">Contatos:</label>
-        <input type="text" id="contatos" name="contatos" required>
+        <label for="contato">Contato:</label>
+        <input type="text" id="contato" name="contato" required>
 
         <button type="submit">Cadastrar</button>
         <button type="button" onclick="goBack()">Voltar</button>
@@ -58,28 +58,29 @@
     <script>
         const { ipcRenderer } = require('electron');
 
-        document.getElementById('fornecedorForm').addEventListener('submit', function(event) {
+        document.getElementById('clienteForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const fornecedor = {
+            const cliente = {
+                razao_social: document.getElementById('razao_social').value,
                 cnpj: document.getElementById('cnpj').value,
-                nome_fantasia: document.getElementById('nome_fantasia').value,
+                nome: document.getElementById('nome').value,
                 endereco: document.getElementById('endereco').value,
                 uf: document.getElementById('uf').value,
                 status: document.getElementById('status').value,
-                contatos: document.getElementById('contatos').value,
+                contato: document.getElementById('contato').value,
             };
 
-            ipcRenderer.invoke('inserirFornecedor', fornecedor).then(() => {
-                alert('Fornecedor cadastrado com sucesso!');
+            ipcRenderer.invoke('inserirCliente', cliente).then(() => {
+                alert('Cliente cadastrado com sucesso!');
                 goBack();
             }).catch(err => {
-                console.error('Erro ao cadastrar fornecedor:', err);
-                alert('Erro ao cadastrar fornecedor.');
+                console.error('Erro ao cadastrar cliente:', err);
+                alert('Erro ao cadastrar cliente.');
             });
         });
 
         function goBack() {
-            ipcRenderer.send('navigate', 'fornecedor.html');
+            ipcRenderer.send('navigate', 'cliente.html');
         }
     </script>
 </body>

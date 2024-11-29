@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Item de Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastrar Item de Estoque</h1>
+
+    <form id="estoqueForm">
+        <label for="codigo_fornecedor">Código do Fornecedor:</label>
+        <input type="text" id="codigo_fornecedor" name="codigo_fornecedor" required>
+
+        <label for="item">Item:</label>
+        <input type="text" id="item" name="item" required>
+
+        <label for="peso">Peso:</label>
+        <input type="number" id="peso" name="peso" required>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="Disponível">Disponível</option>
+            <option value="Indisponível">Indisponível</option>
+        </select>
+
+        <button type="submit">Cadastrar</button>
+        <button type="button" onclick="goBack()">Voltar</button>
+    </form>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('estoqueForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const novoItem = {
+                codigo_fornecedor: document.getElementById('codigo_fornecedor').value,
+                item: document.getElementById('item').value,
+                peso: document.getElementById('peso').value,
+                status: document.getElementById('status').value,
+            };
+
+            ipcRenderer.invoke('inserirEstoque', novoItem).then(() => {
+                alert('Item de estoque cadastrado com sucesso!');
+                goBack();
+            }).catch(err => {
+                console.error('Erro ao cadastrar item de estoque:', err);
+                alert('Erro ao cadastrar item de estoque.');
+            });
+        });
+
+        function goBack() {
+            ipcRenderer.send('navigate', 'estoque.html');
+        }
+    </script>
+</body>
+</html>

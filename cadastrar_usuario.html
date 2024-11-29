@@ -62,28 +62,18 @@
         const { ipcRenderer } = require('electron');
 
         document.getElementById('usuarioForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
-
-            const nome = document.getElementById('nome').value;
-            const telefone = document.getElementById('telefone').value;
-            const email = document.getElementById('email').value;
-            const funcao = document.getElementById('funcao').value;
-            const status = document.getElementById('status').value;
-
-            // Cria o objeto usuário
-            const usuario = { 
-                nome, 
-                telefone, 
-                email, 
-                funcao, 
-                status 
+            event.preventDefault();
+            const usuario = {
+                nome: document.getElementById('nome').value,
+                telefone: document.getElementById('telefone').value,
+                email: document.getElementById('email').value,
+                funcao: document.getElementById('funcao').value,
+                status: document.getElementById('status').value,
             };
 
-            // Envia o usuário para o processo principal do Electron
-            ipcRenderer.invoke('inserirUsuario', usuario).then((id) => {
-                alert('Usuário cadastrado com sucesso! ID: ' + id);
-                document.getElementById('usuarioForm').reset(); // Limpa o formulário após o cadastro
-                goBack(); // Volta para a página de usuários
+            ipcRenderer.invoke('inserirUsuario', usuario).then(() => {
+                alert('Usuário cadastrado com sucesso!');
+                goBack();
             }).catch(err => {
                 console.error('Erro ao cadastrar usuário:', err);
                 alert('Erro ao cadastrar usuário.');
@@ -91,7 +81,7 @@
         });
 
         function goBack() {
-            ipcRenderer.send('navigate', 'usuario.html'); // Navega de volta para a página de usuários
+            ipcRenderer.send('navigate', 'usuario.html');
         }
     </script>
 </body>

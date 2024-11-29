@@ -17,7 +17,7 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('login.html'); // Carrega a tela de login como a primeira página
 }
 
 app.whenReady().then(() => {
@@ -52,12 +52,30 @@ ipcMain.on('goBack', (event) => {
         mainWindow.loadFile(previousPage); // Carrega a página anterior
     }
 });
-// Manipulação de IPC para atualizar a tabela de fornecedores
-ipcMain.on('atualizarTabelaFornecedores', (event) => {
-    const mainWindow = BrowserWindow.getFocusedWindow();
-    if (mainWindow) {
-        mainWindow.webContents.send('atualizarTabela'); // Envia uma mensagem para atualizar a tabela
-    }
+
+// Manipulação de IPC para inserir um novo login
+ipcMain.handle('inserirLogin', (event, novoLogin) => {
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO logins (usuario, login, senha) VALUES (?, ?, ?)`;
+        db.run(sql, [novoLogin.usuario, novoLogin.login, novoLogin.senha], function(err) {
+            if (err) {
+                console.error('Erro ao inserir login:', err.message);
+                return reject(err);
+            }
+            console.log(`Login cadastrado com ID: ${this.lastID}`);
+            resolve(this.lastID); // Retorna o ID do novo registro
+        });
+    });
 });
+
+// Manipulação de IPC para autenticar usuário
+ipcMain.handle('autenticarUsuario', (event, { username, password }) => {
+    if (username === 'admin' && password === 'admin') {
+        return { success: true }; // Autenticação bem-sucedida
+    }
+    return { success: false }; // Autenticação falhou
+});
+
 // Inicializa o banco de dados
-db.criarTabela();
+db.criarTabelaFornecedores();
+db.criarTabelaLogins();

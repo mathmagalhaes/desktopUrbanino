@@ -33,6 +33,9 @@
         <label for="usuario">Nome de Usuário:</label>
         <input type="text" id="usuario" name="usuario" required>
 
+        <label for="login">Login:</label>
+        <input type="text" id="login" name="login" required>
+
         <label for="senha">Senha:</label>
         <input type="password" id="senha" name="senha" required>
 
@@ -47,16 +50,18 @@
             event.preventDefault(); // Impede o envio padrão do formulário
 
             const usuario = document.getElementById('usuario').value;
+            const login = document.getElementById('login').value;
             const senha = document.getElementById('senha').value;
 
             // Cria o objeto login
-            const login = { 
+            const novoLogin = { 
                 usuario, 
+                login, 
                 senha 
             };
 
-            // Envia o login para o processo principal do Electron
-            ipcRenderer.invoke('inserirLogin', login).then((id) => {
+            // Envia o novo login para o processo principal do Electron
+            ipcRenderer.invoke('inserirLogin', novoLogin).then((id) => {
                 alert('Login cadastrado com sucesso! ID: ' + id);
                 document.getElementById('loginForm').reset(); // Limpa o formulário após o cadastro
                 goBack(); // Volta para a página anterior

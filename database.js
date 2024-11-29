@@ -11,7 +11,7 @@ const db = new sqlite3.Database(path.join(__dirname, 'fornecedores.db'), (err) =
 });
 
 // Função para criar a tabela de fornecedores
-function criarTabela() {
+function criarTabelaFornecedores() {
     const sql = `
         CREATE TABLE IF NOT EXISTS fornecedores (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,9 +22,28 @@ function criarTabela() {
     `;
     db.run(sql, (err) => {
         if (err) {
-            console.error('Erro ao criar a tabela:', err.message);
+            console.error('Erro ao criar a tabela de fornecedores:', err.message);
         } else {
             console.log('Tabela de fornecedores criada ou já existe.');
+        }
+    });
+}
+
+// Função para criar a tabela de logins
+function criarTabelaLogins() {
+    const sql = `
+        CREATE TABLE IF NOT EXISTS logins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario TEXT NOT NULL,
+            login TEXT NOT NULL,
+            senha TEXT NOT NULL
+        )
+    `;
+    db.run(sql, (err) => {
+        if (err) {
+            console.error('Erro ao criar a tabela de logins:', err.message);
+        } else {
+            console.log('Tabela de logins criada ou já existe.');
         }
     });
 }
@@ -38,6 +57,20 @@ function inserirFornecedor(fornecedor, callback) {
             callback(err);
         } else {
             console.log(`Fornecedor adicionado com ID: ${this.lastID}`);
+            callback(null, this.lastID);
+        }
+    });
+}
+
+// Função para inserir um novo login
+function inserirLogin(novoLogin, callback) {
+    const sql = `INSERT INTO logins (usuario, login, senha) VALUES (?, ?, ?)`;
+    db.run(sql, [novoLogin.usuario, novoLogin.login, novoLogin.senha], function(err) {
+        if (err) {
+            console.error('Erro ao inserir login:', err.message);
+            callback(err);
+        } else {
+            console.log(`Login cadastrado com ID: ${this.lastID}`);
             callback(null, this.lastID);
         }
     });
@@ -58,7 +91,13 @@ function listarFornecedores(callback) {
 
 // Exporta as funções para uso em outros módulos
 module.exports = {
-    criarTabela,
+    criarTabelaFornecedores,
+    criarTabelaLogins,
     inserirFornecedor,
+    inserirLogin,
     listarFornecedores
 };
+
+// Cria as tabelas quando o módulo é carregado
+criarTabelaFornecedores();
+criarTabelaLogins();
